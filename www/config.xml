@@ -6,10 +6,10 @@
         id        = "com.sheridan.imm.collective"
         version   = "1.0.0">
 
-    <name>Mobile Basic</name>
+    <name>Splat Mobile Game</name>
 
     <description>
-       Blue circle mobile application practice.
+       Mobile game where users must match the coloured circles with the colour word. See how many circles you can splat in 60 seconds.
     </description>
 
     <author href="" email="">
