@@ -1,0 +1,414 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Rebecca Ferris Interactive Puzzle</title>
+
+<style>
+	body {
+		margin:0px;
+		padding:0px;
+		background-color:#000;
+		overflow:hidden;
+	}
+	#myCanvas {
+		position:absolute;
+		left:0px;
+		top:0px;
+		background-color:#000;
+	}
+</style>
+
+<script src="js/createjs-2015.11.26.min.js"></script>
+<script src="js/zim_2.4.js"></script>
+<script src="js/mobile.js"></script>
+<script src="js/swiping.js"></script>
+
+
+<script>
+
+var scaling = "fit"; // full automatically sets width and height to window size
+var width = 640;
+var height = 960;
+var frame = new zim.Frame(scaling, width, height);
+frame.on("ready", function() {
+	zog("ready from ZIM Frame");
+
+	var stage = frame.stage;
+	var stageW = frame.width;
+	var stageH = frame.height;
+
+
+
+	// var stageW;
+	// var stageH;
+	// var ready = false;
+	// var resize;
+	// var orientation;
+	//
+	// makeCanvas();
+	//
+	// var stage = new createjs.Stage("myCanvas");
+	// stage.enableMouseOver(10);  // leave out if mobile
+	// createjs.Touch.enable(stage, true);
+	// sizeStage();
+
+	//preloading images
+	var manifest = [
+		{src:"images/pinkSplat.png", id:"pinkSplat"},
+		{src:"images/purpleSplat.png", id:"purpleSplat"},
+		{src:"images/yellowSplat.png", id:"yellowSplat"},
+		{src:"images/splatLogo.png", id:"logo"}
+	];
+	var preload = new createjs.LoadQueue(false);
+	preload.on("complete", app);
+	preload.loadManifest(manifest);
+
+	function app(){
+
+		//creating waiter/loader
+		var waiterOne = new createjs.Shape();
+		var g = waiterOne.graphics;
+		g.f("white").dc(0, 0, 30);
+		stage.addChild(waiterOne);
+		waiterOne.x=stageW/2;
+		waiterOne.y=stageH/2;
+		waiterOne.alpha = 0.7;
+
+		var waiterTwo = new createjs.Shape();
+		var g = waiterTwo.graphics;
+		g.f("white").dc(0, 0, 30);
+		stage.addChild(waiterTwo);
+		waiterTwo.x=stageW/2;
+		waiterTwo.y=stageH/2;
+
+		//tween waiter
+		createjs.Tween.get(waiterOne)
+				.to({scaleX:2, scaleY:2}, 750, createjs.Ease.bounceOut)
+				.to({scaleX:0, scaleY:0}, 750, createjs.Ease.bounceOut)
+				.to({scaleX:2, scaleY:2}, 750, createjs.Ease.bounceOut)
+				.to({scaleX:0, scaleY:0}, 750, createjs.Ease.bounceOut)
+				.call(removeTween);
+				//maybe call fucntion that starts game
+
+		createjs.Tween.get(waiterTwo)
+				.to({scaleX:0, scaleY:0}, 750, createjs.Ease.bounceOut)
+				.to({scaleX:2, scaleY:2}, 750, createjs.Ease.bounceOut)
+				.to({scaleX:0, scaleY:0}, 750, createjs.Ease.bounceOut)
+				.to({scaleX:2, scaleY:2}, 750, createjs.Ease.bounceOut)
+				.to({scaleX:0, scaleY:0}, 750, createjs.Ease.bounceOut)
+				.call(removeTween)
+				.call(mainScreen);
+
+		//remove waiter
+		function removeTween(evt){
+				stage.removeChild(evt.target);
+		}
+
+		ticker = createjs.Ticker.on("tick", function(){
+		  stage.update();
+		});
+
+		function mainScreen(){
+				//adding background
+				var backing = new zim.Rectangle(stageW, stageH, "#000");
+				backing.cursor = "pointer";
+				stage.addChild(backing);
+
+				//adding logo
+				var logo = new createjs.Bitmap(preload.getResult("logo"));
+				logo.textAlign = "center";
+				logo.x = 70;
+				logo.y = 150;
+				stage.addChild(logo);
+
+				//creating game info text
+				var description =
+						"IN 60 SECONDS\n" +
+						"MATCH THE WORDS\n" +
+						"AND TAP THE CIRCLES\n" +
+						"WATCH THEM SPLAT\n" +
+						"TAP TO START";
+
+				var info = new createjs.Text(description, "25px Arial", "#FFF");
+				info.textAlign = "center";
+				info.x = stageW/2;
+				info.y = 450;
+				info.lineHeight = 40;
+				stage.addChild(info);
+
+				stage.update();
+				backing.on("click",start);
+
+				function start(){
+						stage.removeChild(backing);
+						stage.removeChild(info);
+						stage.removeChild(logo);
+
+						var interval = setInterval(fallingCircles, 500);
+
+						function fallingCircles() {
+								//creating circles
+								var colours=["#ffd4e5","#be29ec","#feffa3"]; //pink, purple, yellow
+
+								var circle = new createjs.Shape();
+								circle.colour = colours[Math.random() * colours.length | 0];
+								circle.graphics.f(circle.colour).dc(0, 0, 50);
+								circle.cursor = "pointer";
+
+								var circles = new createjs.Container();
+								circles.addChild(circle);
+								circles.x = Math.random()*stageW;
+
+								//falling circles animation
+								createjs.Tween.get(circle, {loop:true})
+										.to({x:0}, createjs.Ease.quadInOut)
+										.wait(100)
+										.to({x:30}, 2500, createjs.Ease.quadInOut)
+										.wait(100)
+										.to({x:0}, 2500, createjs.Ease.quadInOut);
+
+										stage.addChild(circles);
+
+										createjs.Tween.get(circles, {loop:true})
+												.to({y:window.innerHeight}, 5000, createjs.Ease.BackOut)
+												.call(removeCircles);
+
+										var ticker = createjs.Ticker.on("tick", stage);
+
+										//creating splat images
+										var splatP = new createjs.Bitmap(preload.getResult("pinkSplat"));
+										splatP.x =  Math.random()* splatP.getBounds().width;
+										splatP.y =  Math.random()* splatP.getBounds().height;;
+										splatP.scaleX = 0.5;
+										splatP.scaleY = 0.5;
+
+										var splatPu = new createjs.Bitmap(preload.getResult("purpleSplat"));
+										splatPu.x =  Math.random()* splatPu.getBounds().width;
+										splatPu.y =  Math.random()* splatPu.getBounds().height;;
+										splatPu.scaleX = 0.5;
+										splatPu.scaleY = 0.5;
+
+										var splatY = new createjs.Bitmap(preload.getResult("yellowSplat"));
+										splatY.x =  Math.random()* splatY.getBounds().width;
+										splatY.y =  Math.random()* splatY.getBounds().height;;
+										splatY.scaleX = 0.5;
+										splatY.scaleY = 0.5;
+
+										//clicking on circles matching words
+										circle.on("click", clicking);
+										function clicking(t){
+												var words = ["PINK", "PURPLE", "YELLOW"];
+												var colours=["#ffd4e5","#be29ec","#feffa3"];
+												var circle = t.target;
+
+												if (title.text == "PINK" && circle.colour == "#ffd4e5"){
+														circles.removeChild(circle);
+														score++;
+														stage.addChild(splatP);
+														//console.log("pink");
+														createjs.Tween.get(splatP)
+																.wait(500)
+																.to({alpha:0.5}, createjs.Ease.quadInOut)
+																.wait(200)
+																.to({alpha:0}, createjs.Ease.quadInOut)
+												}
+
+												if (title.text == "PURPLE" && circle.colour == "#be29ec"){
+														circles.removeChild(circle);
+														score++;
+														//console.log("purple");
+														stage.addChild(splatPu);
+														createjs.Tween.get(splatPu)
+																.wait(500)
+																.to({alpha:0.5}, createjs.Ease.quadInOut)
+																.wait(200)
+																.to({alpha:0}, createjs.Ease.quadInOut)
+												}
+
+												if (title.text == "YELLOW" && circle.colour == "#feffa3"){
+														circles.removeChild(circle);
+														score++;
+								  					// console.log("yellow");
+														stage.addChild(splatY);
+														createjs.Tween.get(splatY)
+																.wait(500)
+																.to({alpha:0.5}, createjs.Ease.quadInOut)
+																.wait(200)
+																.to({alpha:0}, createjs.Ease.quadInOut)
+												}
+										}//end of function clicking()
+
+										//countdown
+										count--;
+										countDown.text = count;
+
+										if (count == -1) {
+												clearInterval(interval);
+												stage.removeChild(circle);
+												stage.removeChild(title);
+												stage.removeChild(countDown);
+
+												stage.addChild(scoreText);
+												stage.addChild(done);
+												stage.addChild(playAgain);
+
+												//score text
+												scoreText.text = "SCORE:" + " " + score;
+												scoreText.x= stageW/2;
+												stage.addChild(scoreText);
+
+												createjs.Tween.get(scoreText)
+														.to({alpha:0})
+														.wait(1500)
+														.to({y:100, alpha:1}, 1000, createjs.Ease.bounceIn);
+
+														//times up text
+														var done = new createjs.Text("TIMES UP!", "50px Arial", "#FFF");
+        										done.textAlign = "center";
+														done.x =stageW/2;
+        										stage.addChild(done);
+
+        										createjs.Tween.get(done)
+																.to({alpha:0})
+																.wait(2000)
+																.to({y:200, alpha:1}, 1000, createjs.Ease.bounceIn);
+
+														//restart text
+        										var playAgain = new createjs.Text("PLAY AGAIN?", "50px Arial", "#FFF");
+        										playAgain.textAlign = "center";
+														playAgain.x =stageW/2;
+        										stage.addChild(playAgain);
+
+        										createjs.Tween.get(playAgain)
+																.to({alpha:0})
+																.wait(2500)
+																.to({y:300, alpha:1}, 2500, createjs.Ease.bounceIn);
+
+        										playAgain.cursor = "pointer";
+        										playAgain.on("click", restart);
+														//restart game
+														function restart(){
+																start();
+																stage.removeChild(scoreText);
+																stage.removeChild(done);
+																stage.removeChild(playAgain);
+														}
+
+			  										stage.update();
+										} //ends the game
+
+						}//end of function fallingCircles()
+
+						//remove circles at the bottom of screen
+						function removeCircles(e) {
+								stage.removeChild(e.target);
+						}
+
+						//creating colour title
+						var words = ["PINK", "PURPLE", "YELLOW"];
+						var title = new createjs.Text(words[Math.random() * words.length | 0], "50px Arial", "#FFF");
+						title.textBaseline = "alphabetic";
+						title.textAlign = "center";
+						title.x = stageW/2;
+						title.y = 100;
+						stage.addChild(title);
+						stage.update();
+
+						//creating countdown
+						var startCount = 60; //REMEBER TO CHANGE
+						var count = startCount;
+						var countDown;
+						function makeCountDown() {
+								stage.removeChild(countDown);
+								countDown = new createjs.Text(count, stageW*.1 + "px arial", "#FFF");
+								countDown.textAlign = "right";
+								stage.addChild(countDown);
+								countDown.x = 100;
+								countDown.y = stageH * .7;
+						}
+						makeCountDown();
+
+						//creating points
+						var startScore= 0;
+						var score = startScore;
+						var scoreText = new createjs.Text();
+						scoreText.textAlign = "center";
+						scoreText.textBaseline = "middle";
+						scoreText.font = "60px Arial";
+						scoreText.color = "#FFF";
+
+						stage.update();
+
+						//resize screen
+						resize = function() {
+								fallingCircles();
+								makeCountDown();
+								// makeTiles();
+								// makeTray();
+								// makeScore()
+
+								stage.update();
+						}
+
+						stage.update();
+						ready = true;
+				}//end of function start()
+
+		} //end of function mainScreen()
+
+} //end of function app()
+
+
+  ////// Start of Scaling Template ////////
+	// function makeCanvas() {
+	// 	var canvas = document.createElement("canvas");
+	// 	canvas.setAttribute("id", "myCanvas");
+	//
+	// 	largest = Math.max(window.innerWidth, screen.width, window.innerHeight, screen.height);
+	// 	if (!/ip(hone|od|ad)/i.test(navigator.userAgent)) largest *= 3;
+	// 	canvas.setAttribute("width", largest);
+	// 	canvas.setAttribute("height", largest);
+	//
+	// 	document.body.appendChild(canvas);
+	//
+	// 	var a = function(e) {
+	// 		if (!e) e = event;
+	// 		if (e.keyCode && (e.keyCode >= 32 && e.keyCode <= 40)) e.preventDefault();
+	// 	}
+	// 	var b = function(e) {
+	// 		if (!e) e = event;
+	// 		e.preventDefault();
+	// 	}
+	// 	var c = b;
+	// 	window.addEventListener("keydown", a);
+	// 	window.addEventListener("mousewheel", b);
+	// 	window.addEventListener("DOMMouseScroll", c);
+	// 	window.addEventListener('resize', function() {
+	// 		sizeStage();
+	// 		if (/android|nexus/i.test(navigator.userAgent)) {
+	// 			setTimeout(function() {
+	// 				sizeStage();
+	// 			}, 500);
+	// 		}
+	// 	});
+	// }
+	//
+	// function sizeStage() {
+	// 	stageW = isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth;
+	// 	stageH = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+	//
+	// 	orientation = (stageW>stageH) ? "horizontal" : "vertical";
+	//
+	// 	if (stage) stage.setBounds(0,0,stageW,stageH);
+	// 	if (ready) resize();
+	//  }
+
+
+}); //end of load event listener function
+
+</script>
+</head>
+<body>
+</body>
+</html>
