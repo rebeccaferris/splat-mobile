@@ -27,7 +27,7 @@
 
 <script>
 
-var scaling = "fit"; // full automatically sets width and height to window size
+var scaling = "fit";
 var width = 640;
 var height = 960;
 var frame = new zim.Frame(scaling, width, height);
@@ -37,21 +37,6 @@ frame.on("ready", function() {
 	var stage = frame.stage;
 	var stageW = frame.width;
 	var stageH = frame.height;
-
-
-
-	// var stageW;
-	// var stageH;
-	// var ready = false;
-	// var resize;
-	// var orientation;
-	//
-	// makeCanvas();
-	//
-	// var stage = new createjs.Stage("myCanvas");
-	// stage.enableMouseOver(10);  // leave out if mobile
-	// createjs.Touch.enable(stage, true);
-	// sizeStage();
 
 	//preloading images
 	var manifest = [
@@ -130,7 +115,7 @@ frame.on("ready", function() {
 						"WATCH THEM SPLAT\n" +
 						"TAP TO START";
 
-				var info = new createjs.Text(description, "25px Arial", "#FFF");
+				var info = new createjs.Text(description, "25px Arial Black", "#FFF");
 				info.textAlign = "center";
 				info.x = stageW/2;
 				info.y = 450;
@@ -264,7 +249,7 @@ frame.on("ready", function() {
 														.to({y:100, alpha:1}, 1000, createjs.Ease.bounceIn);
 
 														//times up text
-														var done = new createjs.Text("TIMES UP!", "50px Arial", "#FFF");
+														var done = new createjs.Text("TIMES UP!", "50px Arial Black", "#FFF");
         										done.textAlign = "center";
 														done.x =stageW/2;
         										stage.addChild(done);
@@ -275,7 +260,7 @@ frame.on("ready", function() {
 																.to({y:200, alpha:1}, 1000, createjs.Ease.bounceIn);
 
 														//restart text
-        										var playAgain = new createjs.Text("PLAY AGAIN?", "50px Arial", "#FFF");
+        										var playAgain = new createjs.Text("PLAY AGAIN?", "50px Arial Black", "#FFF");
         										playAgain.textAlign = "center";
 														playAgain.x =stageW/2;
         										stage.addChild(playAgain);
@@ -307,7 +292,7 @@ frame.on("ready", function() {
 
 						//creating colour title
 						var words = ["PINK", "PURPLE", "YELLOW"];
-						var title = new createjs.Text(words[Math.random() * words.length | 0], "50px Arial", "#FFF");
+						var title = new createjs.Text(words[Math.random() * words.length | 0], "50px Arial Black", "#FFF");
 						title.textBaseline = "alphabetic";
 						title.textAlign = "center";
 						title.x = stageW/2;
@@ -316,12 +301,12 @@ frame.on("ready", function() {
 						stage.update();
 
 						//creating countdown
-						var startCount = 60; //REMEBER TO CHANGE
+						var startCount = 60; 
 						var count = startCount;
 						var countDown;
 						function makeCountDown() {
 								stage.removeChild(countDown);
-								countDown = new createjs.Text(count, stageW*.1 + "px arial", "#FFF");
+								countDown = new createjs.Text(count, stageW*.1 + "px Arial Black", "#FFF");
 								countDown.textAlign = "right";
 								stage.addChild(countDown);
 								countDown.x = 100;
@@ -335,7 +320,7 @@ frame.on("ready", function() {
 						var scoreText = new createjs.Text();
 						scoreText.textAlign = "center";
 						scoreText.textBaseline = "middle";
-						scoreText.font = "60px Arial";
+						scoreText.font = "60px Arial Black";
 						scoreText.color = "#FFF";
 
 						stage.update();
@@ -344,9 +329,6 @@ frame.on("ready", function() {
 						resize = function() {
 								fallingCircles();
 								makeCountDown();
-								// makeTiles();
-								// makeTray();
-								// makeScore()
 
 								stage.update();
 						}
@@ -358,52 +340,6 @@ frame.on("ready", function() {
 		} //end of function mainScreen()
 
 } //end of function app()
-
-
-  ////// Start of Scaling Template ////////
-	// function makeCanvas() {
-	// 	var canvas = document.createElement("canvas");
-	// 	canvas.setAttribute("id", "myCanvas");
-	//
-	// 	largest = Math.max(window.innerWidth, screen.width, window.innerHeight, screen.height);
-	// 	if (!/ip(hone|od|ad)/i.test(navigator.userAgent)) largest *= 3;
-	// 	canvas.setAttribute("width", largest);
-	// 	canvas.setAttribute("height", largest);
-	//
-	// 	document.body.appendChild(canvas);
-	//
-	// 	var a = function(e) {
-	// 		if (!e) e = event;
-	// 		if (e.keyCode && (e.keyCode >= 32 && e.keyCode <= 40)) e.preventDefault();
-	// 	}
-	// 	var b = function(e) {
-	// 		if (!e) e = event;
-	// 		e.preventDefault();
-	// 	}
-	// 	var c = b;
-	// 	window.addEventListener("keydown", a);
-	// 	window.addEventListener("mousewheel", b);
-	// 	window.addEventListener("DOMMouseScroll", c);
-	// 	window.addEventListener('resize', function() {
-	// 		sizeStage();
-	// 		if (/android|nexus/i.test(navigator.userAgent)) {
-	// 			setTimeout(function() {
-	// 				sizeStage();
-	// 			}, 500);
-	// 		}
-	// 	});
-	// }
-	//
-	// function sizeStage() {
-	// 	stageW = isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth;
-	// 	stageH = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
-	//
-	// 	orientation = (stageW>stageH) ? "horizontal" : "vertical";
-	//
-	// 	if (stage) stage.setBounds(0,0,stageW,stageH);
-	// 	if (ready) resize();
-	//  }
-
 
 }); //end of load event listener function
 
