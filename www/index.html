@@ -115,7 +115,7 @@ frame.on("ready", function() {
 						"WATCH THEM SPLAT\n" +
 						"TAP TO START";
 
-				var info = new createjs.Text(description, "30px Arial Black", "#FFF");
+				var info = new createjs.Text(description, "30px Helvetica-Bold", "#FFF");
 				info.textAlign = "center";
 				info.x = stageW/2;
 				info.y = 450;
@@ -249,7 +249,7 @@ frame.on("ready", function() {
 														.to({y:100, alpha:1}, 1000, createjs.Ease.bounceIn);
 
 														//times up text
-														var done = new createjs.Text("TIMES UP!", "50px Arial Black", "#FFF");
+														var done = new createjs.Text("TIMES UP!", "50px Helvetica-Bold", "#FFF");
         										done.textAlign = "center";
 														done.x =stageW/2;
         										stage.addChild(done);
@@ -260,7 +260,7 @@ frame.on("ready", function() {
 																.to({y:200, alpha:1}, 1000, createjs.Ease.bounceIn);
 
 														//restart text
-        										var playAgain = new createjs.Text("PLAY AGAIN?", "50px Arial Black", "#FFF");
+        										var playAgain = new createjs.Text("PLAY AGAIN?", "50px Helvetica-Bold", "#FFF");
         										playAgain.textAlign = "center";
 														playAgain.x =stageW/2;
         										stage.addChild(playAgain);
@@ -292,7 +292,7 @@ frame.on("ready", function() {
 
 						//creating colour title
 						var words = ["PINK", "PURPLE", "YELLOW"];
-						var title = new createjs.Text(words[Math.random() * words.length | 0], "50px Arial Black", "#FFF");
+						var title = new createjs.Text(words[Math.random() * words.length | 0], "50px Helvetica-Bold", "#FFF");
 						title.textBaseline = "alphabetic";
 						title.textAlign = "center";
 						title.x = stageW/2;
@@ -306,7 +306,7 @@ frame.on("ready", function() {
 						var countDown;
 						function makeCountDown() {
 								stage.removeChild(countDown);
-								countDown = new createjs.Text(count, stageW*.1 + "px Arial Black", "#FFF");
+								countDown = new createjs.Text(count, stageW*.1 + "px Helvetica-Bold", "#FFF");
 								countDown.textAlign = "right";
 								stage.addChild(countDown);
 								countDown.x = 100;
@@ -320,7 +320,7 @@ frame.on("ready", function() {
 						var scoreText = new createjs.Text();
 						scoreText.textAlign = "center";
 						scoreText.textBaseline = "middle";
-						scoreText.font = "60px Arial Black";
+						scoreText.font = "60px Helvetica-Bold";
 						scoreText.color = "#FFF";
 
 						stage.update();
